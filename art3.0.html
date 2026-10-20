@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>铜铜 Atelier</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Noto+Serif+SC:wght@300;400&display=swap" rel="stylesheet">
+<style>
+/* ── 色卡变量 ── */
+:root {
+  --ash:        #B7B4AE;
+  --charcoal:   #726E68;
+  --bark:       #33312F;
+  --kite:       #371E1E;
+  --angst:      #0A0A0A;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--angst);
+  color: var(--ash);
+  font-family: 'Noto Serif SC', serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+  cursor: default;
+}
+
+/* ════════════════════════════════
+   NAV 
+════════════════════════════════ */
+nav {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 200;
+  width: min(94vw, 1000px);
+  background: rgba(183, 180, 174, 1);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 100px;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+}
+.cat-logo { width: 45px; height: 45px; flex-shrink: 0; cursor: pointer; margin-right: 15px; }
+.cat-logo img { width: 100%; height: 100%; object-fit: contain; }
+.paws { display: flex; gap: 10px; margin-left: auto; }
+.paw-btn {
+  width: 44px; height: 44px; border-radius: 100px; display: flex; align-items: center;
+  padding: 0 11px; cursor: pointer; overflow: hidden; transition: 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.paw-btn:hover { width: 145px; background: rgba(51, 49, 47, 0.15); }
+.paw-icon { width: 22px; height: 22px; flex-shrink: 0; }
+.paw-icon img { width: 100%; height: 100%; object-fit: contain; }
+.paw-text { margin-left: 12px; white-space: nowrap; font-size: 0.85rem; color: var(--bark); opacity: 0; transition: 0.4s; }
+.paw-btn:hover .paw-text { opacity: 1; }
+.paw-btn.active { background: var(--bark); width: 145px; }
+.paw-btn.active .paw-text { opacity: 1; color: var(--ash); }
+.paw-btn.active .paw-icon { filter: brightness(0) invert(1); }
+
+/* ════════════════════════════════
+   HERO 布局
+════════════════════════════════ */
+#page-home {
+  min-height: 150vh;
+  position: relative;
+  overflow: visible;
+  padding-top: 140px; 
+}
+
+.img-a-box {
+  position: relative;
+  width: 50vw; 
+  aspect-ratio: 16 / 9; 
+  background: var(--bark);
+  box-shadow: 25px 20px 0 var(--bark);
+  margin-bottom: 35px;
+  z-index: 10;
+}
+.img-a-box img { width: 100%; height: 100%; object-fit: cover; }
+
+.hero-text-layer {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+  width: fit-content;
+  margin-left: 10vw; 
+  z-index: 30; 
+}
+.hero-eyebrow {
+  font-size: 0.6rem;
+  letter-spacing: 0.8em;
+  color: var(--kite);
+  margin-bottom: 20px;
+  font-weight: 600;
+  padding-left: 0.8em; 
+}
+.hero-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(4rem, 10vw, 7rem);
+  line-height: 0.85;
+  color: var(--kite);
+}
+
+.deco-bar {
+  position: absolute;
+  left: 0;
+  top: calc(50vw / 1.77 + 220px + 7vw); 
+  width: 46vw;
+  min-width: 250px;
+  height: 60px;
+  background: var(--charcoal);
+  z-index: 5; 
+}
+
+.img-b-container {
+  position: absolute;
+  left: 5vw;
+  top: 35vh; 
+  width: 85vw;
+  height: 80vh;
+  background: var(--ash);
+  display: flex;
+  justify-content: flex-end;
+  z-index: 1;
+}
+.img-b-actual {
+  width: 40vw;
+  height: 100%;
+  overflow: hidden;
+}
+.img-b-actual img { 
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: right center; 
+  filter: grayscale(0.2);
+  opacity: 0.4;
+}
+
+.watermark-fixed {
+  position: absolute;
+  right: 2vw; 
+  top: 50%;
+  transform-origin: right center;
+  transform: translateY(-50%) rotate(90deg);
+  font-size: 1rem;
+  letter-spacing: 5em;    
+  text-indent: 5em;    
+  color: var(--ash); 
+  opacity: 0.8;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 100;
+}
+
+/* 右侧底部装饰条 */
+.bottom-right-deco {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 40px;
+  height: 45vw;
+  background-color: var(--kite);
+  z-index: 20; /* 确保在联系方式容器之上 */
+}
+
+/* ════════════════════════════════
+   联系方式容器 (调整了间距)
+════════════════════════════════ */
+.contact-section {
+  background-color: var(--kite);
+  color: var(--ash);
+  padding: 80px 60px;
+  
+  /* 
+     计算逻辑：
+     图片B top(35vh) + 图片B height(80vh) = 115vh (这是图片B底部的线)
+     再加上您要求的 10vw 距离。
+     由于 contact-section 上面还有 Hero 文字等内容占位，
+     我们用 margin-top: 100vh 左右可以确保它刚好出现在图片下方并留有余量
+  */
+  margin-top: calc(50vh + 1vw); 
+  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  z-index: 10;
+}
+.contact-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 3.5rem;
+  letter-spacing: 0.1em;
+  margin-bottom: 40px;
+}
+.contact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 40px;
+  width: 100%;
+  max-width: 1000px;
+}
+.contact-item h4 {
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  margin-bottom: 10px;
+  color: var(--ash);
+  opacity: 0.6;
+}
+.contact-item p {
+  font-size: 1.1rem;
+  font-weight: 300;
+}
+.contact-item a {
+  color: var(--ash);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(183, 180, 174, 0.3);
+  transition: 0.3s;
+}
+.contact-item a:hover {
+  border-bottom: 1px solid var(--ash);
+}
+
+/* ════════════════════════════════
+   通用逻辑
+════════════════════════════════ */
+.inner-page { display: none; min-height: 100vh; padding: 140px 60px 80px; animation: fadeUp 0.6s ease both; }
+@keyframes fadeUp { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:none; } }
+
+.ai-grid { display: flex; gap: 12px; height: 500px; margin-top: 30px;}
+.ai-card { flex: 1; position: relative; border-radius: 15px; overflow: hidden; transition: flex 0.6s ease; cursor: pointer; }
+.ai-card:hover { flex: 3; }
+.ai-card-bg { position: absolute; inset: 0; background: var(--ai-bg); }
+.ai-info { position: absolute; bottom: 0; padding: 20px; background: linear-gradient(transparent, rgba(0,0,0,0.8)); width: 100%; }
+.ai-brand { font-family: 'Bebas Neue'; font-size: 1.5rem; color: #fff; }
+
+.ai-claude   { --ai-bg: linear-gradient(155deg,#5a1a08,#d07050); }
+.ai-deepseek { --ai-bg: linear-gradient(155deg,#050e28,#1a60c0); }
+.ai-gpt      { --ai-bg: linear-gradient(155deg,#041408,#287840); }
+.ai-gemini   { --ai-bg: linear-gradient(155deg,#f09098,#70b8f0); }
+.ai-grok     { --ai-bg: linear-gradient(155deg,#050505,#404040); }
+
+.trail-paw { position: fixed; pointer-events: none; font-size: 1.2rem; z-index: 9999; animation: pawFade 1.2s ease forwards; }
+@keyframes pawFade { 0% { opacity: 0.6; transform: translate(-50%,-50%) scale(1); } 100% { opacity: 0; transform: translate(-50%,-80%) scale(0.5); } }
+
+footer { padding: 40px 60px; border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--charcoal); }
+footer a { color: var(--ash); text-decoration: none; margin-left: 15px; }
+
+@media (max-width: 768px) {
+  .img-a-box { width: 100vw; box-shadow: none; }
+  .img-b-container { display: none; }
+  .hero-text-layer { margin-left: 5vw; }
+  .deco-bar { top: calc(100vw / 1.77 + 160px); width: 80vw; }
+  .contact-grid { grid-template-columns: 1fr; gap: 30px; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="cat-logo" id="catLogo"><img src="https://files.catbox.moe/gko5wo.png" alt="Logo"></div>
+  <div class="paws">
+    <div class="paw-btn" onclick="navigate('oc')"><div class="paw-icon"><img src="https://files.catbox.moe/5z6dwp.png"></div><span class="paw-text">OC</span></div>
+    <div class="paw-btn" onclick="navigate('ai')"><div class="paw-icon"><img src="https://files.catbox.moe/9dk4ty.png"></div><span class="paw-text">AI拟人</span></div>
+    <div class="paw-btn" onclick="navigate('self')"><div class="paw-icon"><img src="https://files.catbox.moe/5z6dwp.png"></div><span class="paw-text">关于铜</span></div>
+    <div class="paw-btn" onclick="navigate('friend')"><div class="paw-icon"><img src="https://files.catbox.moe/9dk4ty.png"></div><span class="paw-text">朋友</span></div>
+    <div class="paw-btn" onclick="navigate('mystery')"><div class="paw-icon"><img src="https://files.catbox.moe/5z6dwp.png"></div><span class="paw-text">神秘大门</span></div>
+  </div>
+</nav>
+
+<section id="page-home">
+  <div class="hero-content-group">
+    <div class="img-a-box">
+      <img src="https://files.catbox.moe/6tybd0.png" alt="Image A">
+    </div>
+    
+    <div class="hero-text-layer">
+      <p class="hero-eyebrow">PURE DESIGN & DIGITAL ILLUSTRATIONS</p>
+      <h1 class="hero-title">ATELIER</h1>
+    </div>
+  </div>
+
+  <div class="deco-bar"></div>
+
+  <div class="img-b-container">
+    <div class="img-b-actual">
+      <img src="https://files.catbox.moe/avjoa9.jpg" alt="Image B">
+    </div>
+  </div>
+
+  <div class="watermark-fixed">不可食用铜</div>
+
+  <!-- 底部装饰条 -->
+  <div class="bottom-right-deco"></div>
+
+  <!-- 联系方式区域 -->
+  <section class="contact-section">
+    <h2 class="contact-title">GET IN TOUCH</h2>
+    <div class="contact-grid">
+      <div class="contact-item">
+        <h4>EMAIL</h4>
+        <p><a href="mailto:your-email@example.com">tongtong@atelier.com</a></p>
+      </div>
+      <div class="contact-item">
+        <h4>WEIBO</h4>
+        <p><a href="#">@不可食用铜</a></p>
+      </div>
+      <div class="contact-item">
+        <h4>BILI BILI</h4>
+        <p><a href="#">@不可食用铜</a></p>
+      </div>
+      <div class="contact-item">
+        <h4>LOCATION</h4>
+        <p>Internet · Digital World</p>
+      </div>
+    </div>
+  </section>
+</section>
+
+<!-- 其他内页 -->
+<section id="page-oc" class="inner-page"><h2>Original Characters</h2><p>内容正在整理中...</p></section>
+<section id="page-ai" class="inner-page">
+  <h2>AI Personification</h2>
+  <div class="ai-grid">
+    <div class="ai-card ai-claude"><div class="ai-card-bg"></div><div class="ai-info"><div class="ai-brand">Claude</div></div></div>
+    <div class="ai-card ai-deepseek"><div class="ai-card-bg"></div><div class="ai-info"><div class="ai-brand">DeepSeek</div></div></div>
+    <div class="ai-card ai-gpt"><div class="ai-card-bg"></div><div class="ai-info"><div class="ai-brand">GPT</div></div></div>
+    <div class="ai-card ai-gemini"><div class="ai-card-bg"></div><div class="ai-info"><div class="ai-brand">Gemini</div></div></div>
+    <div class="ai-card ai-grok"><div class="ai-card-bg"></div><div class="ai-info"><div class="ai-brand">Grok</div></div></div>
+  </div>
+</section>
+<section id="page-self" class="inner-page"><h2>My World</h2></section>
+<section id="page-friend" class="inner-page"><h2>Friends</h2></section>
+<section id="page-mystery" class="inner-page"><h2>Unknown</h2></section>
+
+<footer id="site-footer">
+  <span>© 不可食用铜 Atelier</span>
+</footer>
+
+<script>
+const zones = ['oc', 'ai', 'self', 'friend', 'mystery'];
+
+function navigate(targetZone) {
+  document.getElementById('page-home').style.display = 'none';
+  document.getElementById('site-footer').style.display = 'none';
+  zones.forEach(z => document.getElementById('page-' + z).style.display = 'none');
+  const target = document.getElementById('page-' + targetZone);
+  if(target) target.style.display = 'block';
+  document.querySelectorAll('.paw-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('onclick').includes(targetZone));
+  });
+}
+
+document.getElementById('catLogo').addEventListener('click', () => {
+  zones.forEach(z => document.getElementById('page-' + z).style.display = 'none');
+  document.getElementById('page-home').style.display = 'block'; // 恢复为 block 以包含联系区域
+  document.getElementById('site-footer').style.display = 'flex';
+  document.querySelectorAll('.paw-btn').forEach(b => b.classList.remove('active'));
+});
+
+let lastPaw = 0;
+document.addEventListener('mousemove', e => {
+  const now = Date.now();
+  if (now - lastPaw < 300) return;
+  lastPaw = now;
+  const paw = document.createElement('div');
+  paw.className = 'trail-paw';
+  paw.innerHTML = '🐾';
+  paw.style.left = e.clientX + 'px';
+  paw.style.top = e.clientY + 'px';
+  document.body.appendChild(paw);
+  setTimeout(() => paw.remove(), 1200);
+});
+</script>
+
+</body>
+</html>
