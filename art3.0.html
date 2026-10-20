@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>铜铜 Atelier</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Noto+Serif+SC:wght@300;400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Titillium+Web:wght@900&family=Montserrat:wght@700&family=Noto+Serif+SC:wght@300;400&display=swap" rel="stylesheet">
 <style>
 /* ── 色卡变量 ── */
 :root {
@@ -13,6 +13,11 @@
   --bark:       #33312F;
   --kite:       #371E1E;
   --angst:      #0A0A0A;
+
+  /* 导航尺寸（电脑端，按 1920 宽设计稿换算成 vw） */
+  --logo-w: clamp(64px, 7.1vw, 136px);
+  --paw:    clamp(34px, 4vw, 77px);
+  --paw-gap: clamp(4px, 0.55vw, 10px);
 }
 
 * { margin:0; padding:0; box-sizing:border-box; }
@@ -26,211 +31,208 @@ body {
   cursor: default;
 }
 
+/* SVG 图标统一跟随文字颜色 */
+.icon { display: block; width: 100%; height: 100%; fill: currentColor; }
+
 /* ════════════════════════════════
-   NAV 
+   NAV
 ════════════════════════════════ */
 nav {
   position: fixed;
-  top: 24px;
+  top: clamp(14px, 2.1vw, 40px);
   left: 50%;
   transform: translateX(-50%);
   z-index: 200;
-  width: min(94vw, 1000px);
-  background: rgba(183, 180, 174, 1);
-  backdrop-filter: blur(20px) saturate(140%);
-  -webkit-backdrop-filter: blur(20px) saturate(140%);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 100px;
-  padding: 10px 20px;
+  width: 93.5vw;
+  background: var(--ash);
+  border-radius: 999px;
+  padding: clamp(8px, 0.9vw, 18px) clamp(18px, 2vw, 40px);
   display: flex;
   align-items: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
 }
-.cat-logo { width: 45px; height: 45px; flex-shrink: 0; cursor: pointer; margin-right: 15px; }
-.cat-logo img { width: 100%; height: 100%; object-fit: contain; }
-.paws { display: flex; gap: 10px; margin-left: auto; }
+.cat-logo { width: var(--logo-w); flex-shrink: 0; cursor: pointer; color: var(--kite); }
+.cat-logo .icon { height: auto; aspect-ratio: 100 / 75.52; }
+
+.paws { display: flex; gap: var(--paw-gap); margin-left: auto; }
 .paw-btn {
-  width: 44px; height: 44px; border-radius: 100px; display: flex; align-items: center;
-  padding: 0 11px; cursor: pointer; overflow: hidden; transition: 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+  --pad: calc(var(--paw) * 0.08);
+  height: calc(var(--paw) + var(--pad) * 2);
+  width:  calc(var(--paw) + var(--pad) * 2);
+  padding: 0 var(--pad);
+  border-radius: 999px;
+  display: flex; align-items: center;
+  cursor: pointer; overflow: hidden;
+  transition: 0.5s cubic-bezier(0.23, 1, 0.32, 1);
 }
-.paw-btn:hover { width: 145px; background: rgba(51, 49, 47, 0.15); }
-.paw-icon { width: 22px; height: 22px; flex-shrink: 0; }
-.paw-icon img { width: 100%; height: 100%; object-fit: contain; }
-.paw-text { margin-left: 12px; white-space: nowrap; font-size: 0.85rem; color: var(--bark); opacity: 0; transition: 0.4s; }
+.paw-icon { width: var(--paw); height: var(--paw); flex-shrink: 0; transition: transform 0.4s; }
+/* 灰 / 红 交替 */
+.paw-btn:nth-child(odd)  .paw-icon { color: var(--charcoal); }
+.paw-btn:nth-child(even) .paw-icon { color: var(--kite); }
+.paw-text {
+  margin-left: 0.8em; white-space: nowrap;
+  font-size: clamp(0.85rem, 0.95vw, 1.1rem); color: var(--bark);
+  opacity: 0; transition: 0.4s;
+}
+.paw-btn:hover  { width: calc(var(--paw) + 7em); background: rgba(51, 49, 47, 0.15); }
 .paw-btn:hover .paw-text { opacity: 1; }
-.paw-btn.active { background: var(--bark); width: 145px; }
+.paw-btn:hover .paw-icon { transform: rotate(-12deg); }
+.paw-btn.active { width: calc(var(--paw) + 7em); background: var(--bark); }
 .paw-btn.active .paw-text { opacity: 1; color: var(--ash); }
-.paw-btn.active .paw-icon { filter: brightness(0) invert(1); }
+.paw-btn.active .paw-icon { color: var(--ash); }
 
 /* ════════════════════════════════
-   HERO 布局
+   HERO 布局（电脑端）
 ════════════════════════════════ */
-#page-home {
-  min-height: 150vh;
+#page-home { position: relative; }
+
+.hero-stage {
   position: relative;
-  overflow: visible;
-  padding-top: 140px; 
+  height: 68vw;           /* 到图片B底部再留一点空 */
+  padding-top: 13.2vw;
 }
 
 .img-a-box {
   position: relative;
-  width: 50vw; 
-  aspect-ratio: 16 / 9; 
+  width: 44.3vw;
+  aspect-ratio: 1.58;
   background: var(--bark);
-  box-shadow: 25px 20px 0 var(--bark);
-  margin-bottom: 35px;
+  box-shadow: 1.75vw 1.75vw 0 var(--bark);
+  margin-bottom: 2.3vw;
   z-index: 10;
 }
-.img-a-box img { width: 100%; height: 100%; object-fit: cover; }
+.img-a-box img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
 .hero-text-layer {
   position: relative;
   display: flex;
   flex-direction: column;
-  align-items: center; 
+  align-items: center;
   width: fit-content;
-  margin-left: 10vw; 
-  z-index: 30; 
+  margin-left: 7.5vw;
+  z-index: 30;
 }
 .hero-eyebrow {
-  font-size: 0.6rem;
-  letter-spacing: 0.8em;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: clamp(9px, 0.78vw, 15px);
+  letter-spacing: 0.5em;
+  padding-left: 0.5em;     /* 抵消最后一个字母后的间距，保持居中 */
   color: var(--kite);
-  margin-bottom: 20px;
-  font-weight: 600;
-  padding-left: 0.8em; 
+  margin-bottom: 0.4vw;
+  white-space: nowrap;
 }
 .hero-title {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(4rem, 10vw, 7rem);
-  line-height: 0.85;
+  font-family: 'Titillium Web', sans-serif;
+  font-weight: 900;
+  font-size: 5.4vw;
+  line-height: 0.8;
   color: var(--kite);
 }
 
 .deco-bar {
   position: absolute;
   left: 0;
-  top: calc(50vw / 1.77 + 220px + 7vw); 
-  width: 46vw;
-  min-width: 250px;
-  height: 60px;
+  top: 50vw;
+  width: 37.3vw;
+  height: 4.2vw;
   background: var(--charcoal);
-  z-index: 5; 
+  z-index: 5;
 }
 
 .img-b-container {
   position: absolute;
-  left: 5vw;
-  top: 35vh; 
-  width: 85vw;
-  height: 80vh;
+  left: 5.5vw;
+  top: 20.7vw;
+  width: 83.4vw;
+  height: 46vw;
   background: var(--ash);
   display: flex;
   justify-content: flex-end;
   z-index: 1;
 }
 .img-b-actual {
-  width: 40vw;
+  width: 48.4vw;
   height: 100%;
   overflow: hidden;
 }
-.img-b-actual img { 
+.img-b-actual img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: right center; 
+  object-position: right center;
   filter: grayscale(0.2);
   opacity: 0.4;
+  display: block;
 }
 
+/* 右侧竖排水印：字符侧躺 */
 .watermark-fixed {
   position: absolute;
-  right: 2vw; 
-  top: 50%;
-  transform-origin: right center;
-  transform: translateY(-50%) rotate(90deg);
-  font-size: 1rem;
-  letter-spacing: 5em;    
-  text-indent: 5em;    
-  color: var(--ash); 
+  right: 7.25vw;
+  top: 12.6vw;
+  writing-mode: vertical-rl;
+  text-orientation: sideways;
+  font-size: max(12px, 1.1vw);
+  letter-spacing: 7.95vw;
+  line-height: 1;
+  color: var(--ash);
   opacity: 0.8;
   white-space: nowrap;
   pointer-events: none;
   z-index: 100;
 }
 
-/* 右侧底部装饰条 */
+/* 右侧红色竖条，一直落到底部横条 */
 .bottom-right-deco {
   position: absolute;
   right: 0;
+  top: 43.9vw;
   bottom: 0;
-  width: 40px;
-  height: 45vw;
+  width: 4.5vw;
   background-color: var(--kite);
-  z-index: 20; /* 确保在联系方式容器之上 */
+  z-index: 20;
 }
+/* 底部红色横条（与竖条相接） */
+.kite-band { height: 4.5vw; background: var(--kite); }
 
 /* ════════════════════════════════
-   联系方式容器 (调整了间距)
+   联系方式
 ════════════════════════════════ */
 .contact-section {
-  background-color: var(--kite);
-  color: var(--ash);
-  padding: 80px 60px;
-  
-  /* 
-     计算逻辑：
-     图片B top(35vh) + 图片B height(80vh) = 115vh (这是图片B底部的线)
-     再加上您要求的 10vw 距离。
-     由于 contact-section 上面还有 Hero 文字等内容占位，
-     我们用 margin-top: 100vh 左右可以确保它刚好出现在图片下方并留有余量
-  */
-  margin-top: calc(50vh + 1vw); 
-  
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  position: relative;
-  z-index: 10;
-}
-.contact-title {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 3.5rem;
-  letter-spacing: 0.1em;
-  margin-bottom: 40px;
+  background-color: var(--charcoal);
+  padding: 3.5vw 6vw;
 }
 .contact-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 40px;
-  width: 100%;
-  max-width: 1000px;
+  grid-template-columns: 1fr auto 1fr;
+  column-gap: 6vw;
+  max-width: 1100px;
+  margin: 0 auto;
 }
-.contact-item h4 {
-  font-size: 0.7rem;
-  letter-spacing: 0.3em;
-  margin-bottom: 10px;
-  color: var(--ash);
-  opacity: 0.6;
+.contact-col { display: flex; flex-direction: column; gap: 1.6em; padding: 0.6em 0; }
+.contact-col:first-child { justify-self: end; }
+/* 中间双竖线 */
+.contact-divider {
+  width: 10px;
+  border-left: 1px solid var(--ash);
+  border-right: 1px solid var(--ash);
+  opacity: 0.7;
 }
-.contact-item p {
-  font-size: 1.1rem;
+.contact-item {
+  font-size: clamp(0.95rem, 1.25vw, 1.4rem);
   font-weight: 300;
-}
-.contact-item a {
+  letter-spacing: 0.12em;
   color: var(--ash);
-  text-decoration: none;
-  border-bottom: 1px solid rgba(183, 180, 174, 0.3);
-  transition: 0.3s;
+  white-space: nowrap;
 }
-.contact-item a:hover {
-  border-bottom: 1px solid var(--ash);
-}
+.contact-item a { color: inherit; text-decoration: none; border-bottom: 1px solid transparent; transition: 0.3s; }
+.contact-item a:hover { border-bottom-color: var(--ash); }
 
 /* ════════════════════════════════
    通用逻辑
 ════════════════════════════════ */
-.inner-page { display: none; min-height: 100vh; padding: 140px 60px 80px; animation: fadeUp 0.6s ease both; }
+.inner-page { display: none; min-height: 100vh; padding: calc(var(--logo-w) + 120px) 60px 80px; animation: fadeUp 0.6s ease both; }
 @keyframes fadeUp { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:none; } }
 
 .ai-grid { display: flex; gap: 12px; height: 500px; margin-top: 30px;}
@@ -246,78 +248,126 @@ nav {
 .ai-gemini   { --ai-bg: linear-gradient(155deg,#f09098,#70b8f0); }
 .ai-grok     { --ai-bg: linear-gradient(155deg,#050505,#404040); }
 
-.trail-paw { position: fixed; pointer-events: none; font-size: 1.2rem; z-index: 9999; animation: pawFade 1.2s ease forwards; }
-@keyframes pawFade { 0% { opacity: 0.6; transform: translate(-50%,-50%) scale(1); } 100% { opacity: 0; transform: translate(-50%,-80%) scale(0.5); } }
+/* 鼠标拖尾：小猫爪 */
+.trail-paw { position: fixed; pointer-events: none; width: 18px; height: 18px; color: var(--charcoal); z-index: 9999; animation: pawFade 1.2s ease forwards; }
+@keyframes pawFade { 0% { opacity: 0.7; transform: translate(-50%,-50%) rotate(var(--r)) scale(1); } 100% { opacity: 0; transform: translate(-50%,-80%) rotate(var(--r)) scale(0.5); } }
 
 footer { padding: 40px 60px; border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--charcoal); }
 footer a { color: var(--ash); text-decoration: none; margin-left: 15px; }
 
+/* ════════════════════════════════
+   手机端（按 375 宽设计稿换算成 vw）
+════════════════════════════════ */
 @media (max-width: 768px) {
-  .img-a-box { width: 100vw; box-shadow: none; }
-  .img-b-container { display: none; }
-  .hero-text-layer { margin-left: 5vw; }
-  .deco-bar { top: calc(100vw / 1.77 + 160px); width: 80vw; }
-  .contact-grid { grid-template-columns: 1fr; gap: 30px; }
+  :root {
+    --logo-w: 13.6vw;
+    --paw: 6.7vw;
+    --paw-gap: 1.9vw;
+  }
+  nav { top: 2.4vw; width: 93vw; padding: 2.4vw 3vw 2.4vw 4vw; }
+
+  /* 手机没有悬停，激活时只换底色不展开 */
+  .paw-btn:hover, .paw-btn.active { width: calc(var(--paw) + var(--pad) * 2); }
+  .paw-btn:hover { background: none; }
+  .paw-btn:hover .paw-icon { transform: none; }
+  .paw-text { display: none; }
+
+  .hero-stage { height: 226.7vw; padding-top: 24.8vw; }
+
+  .img-a-box {
+    width: 75vw;
+    aspect-ratio: 1.55;
+    box-shadow: 3.7vw 3.7vw 0 var(--bark);
+    margin-bottom: 4.6vw;
+  }
+  .hero-text-layer { align-items: flex-start; margin-left: 9.3vw; }
+  .hero-eyebrow { font-size: 1.9vw; letter-spacing: 0.5em; padding-left: 0; margin-bottom: 1.6vw; }
+  .hero-title { font-size: 17.5vw; }
+
+  .deco-bar { top: 203.7vw; width: 66vw; height: 11vw; }
+
+  .img-b-container { left: 7.3vw; top: 45vw; width: 79vw; height: 177vw; }
+  .img-b-actual { width: 100%; }
+  .img-b-actual img { object-position: center; }
+
+  .watermark-fixed { right: 4.6vw; top: 57vw; font-size: 3.2vw; letter-spacing: 26.1vw; }
+
+  .bottom-right-deco { top: 197.3vw; width: 9.3vw; }
+  .kite-band { height: 9.3vw; }
+
+  .contact-section { padding: 5vw 0 6vw; }
+  .contact-grid { column-gap: 5vw; }
+  .contact-col { gap: 6.4vw; padding: 1vw 0; }
+  .contact-col:first-child { justify-self: start; padding-left: 8vw; }
+  .contact-divider { width: 2.4vw; }
+  .contact-item { font-size: 3.4vw; letter-spacing: 0.1em; }
+
+  .inner-page { padding: calc(var(--logo-w) + 60px) 20px 60px; }
+  .ai-grid { flex-direction: column; height: 600px; }
+  footer { padding: 30px 20px; }
 }
 </style>
 </head>
 <body>
 
+<!-- 猫头 / 猫爪矢量图（由 cat-logo.svg、cat-paw.svg 转成的 symbol，颜色跟随 color） -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-cat" viewBox="0 0 100.00 75.52"><path fill-rule="evenodd" d="M48.92 74.50C48.74 74.49 48.00 74.43 47.28 74.38C45.63 74.25 43.68 74.03 40.97 73.66C39.80 73.50 38.15 73.28 37.30 73.17C35.30 72.90 34.88 72.82 29.42 71.63C22.55 70.13 20.14 69.67 15.42 68.98C14.67 68.87 13.68 68.71 13.23 68.62C10.45 68.07 9.96 67.28 11.02 65.07C11.64 63.79 12.13 63.14 13.47 61.77C14.25 60.98 14.34 60.86 14.27 60.76C14.16 60.63 13.62 60.36 12.88 60.05C9.26 58.55 6.80 56.96 4.23 54.45C3.22 53.47 2.48 52.62 1.91 51.77C0.88 50.27 0.75 49.44 1.44 48.75C1.93 48.26 2.31 48.16 4.91 47.88C7.85 47.55 9.56 47.14 11.75 46.21C12.94 45.71 12.90 45.81 12.17 45.05C10.73 43.54 9.80 41.91 9.66 40.61C9.48 38.98 10.77 37.81 12.37 38.15C12.56 38.19 12.73 38.21 12.74 38.20C12.76 38.18 12.68 37.80 12.57 37.36C10.13 27.42 10.18 15.56 12.67 7.99C13.81 4.56 15.33 2.45 17.47 1.38C18.32 0.95 18.30 0.95 19.13 1.27C22.95 2.75 34.58 8.28 38.74 10.59C39.58 11.06 40.42 11.49 40.61 11.55C41.07 11.69 41.54 11.70 46.09 11.59C49.49 11.51 50.51 11.51 53.91 11.59C58.46 11.70 58.93 11.69 59.39 11.55C59.58 11.49 60.42 11.06 61.26 10.59C65.42 8.28 77.05 2.75 80.87 1.27C81.70 0.95 81.68 0.95 82.53 1.38C85.03 2.64 86.73 5.35 87.88 9.91C89.82 17.60 89.66 28.16 87.46 37.23C87.33 37.75 87.24 38.18 87.26 38.20C87.27 38.21 87.44 38.19 87.63 38.15C89.23 37.81 90.52 38.98 90.34 40.61C90.20 41.91 89.27 43.54 87.83 45.05C87.10 45.81 87.06 45.71 88.25 46.21C90.44 47.14 92.15 47.55 95.09 47.88C97.69 48.16 98.07 48.26 98.56 48.75C99.25 49.44 99.12 50.27 98.09 51.77C96.66 53.87 93.74 56.53 91.23 58.01C89.87 58.82 88.92 59.29 87.18 60.03C86.35 60.37 85.84 60.63 85.73 60.76C85.66 60.86 85.75 60.98 86.53 61.77C87.86 63.12 88.37 63.81 88.98 65.08C90.04 67.28 89.55 68.07 86.77 68.62C86.32 68.71 85.33 68.87 84.58 68.98C79.86 69.67 77.45 70.13 70.58 71.63C65.12 72.82 64.70 72.90 62.70 73.17C61.85 73.28 60.20 73.50 59.03 73.66C54.21 74.31 50.48 74.62 48.92 74.50ZM72.48 60.10C74.47 58.70 76.12 57.26 77.40 55.81C78.34 54.75 78.85 54.06 78.70 54.06C78.69 54.06 78.36 54.20 77.97 54.38C73.91 56.20 67.99 57.76 63.09 58.28C61.92 58.41 61.78 58.43 61.91 58.51C62.40 58.78 70.70 60.56 71.67 60.60C71.72 60.60 72.09 60.38 72.48 60.10Z"/></symbol>
+  <symbol id="i-paw" viewBox="0 0 100.00 93.93"><path fill-rule="evenodd" d="M30.89 92.58C29.07 92.29 28.24 91.99 26.54 90.96C24.49 89.73 23.20 88.35 22.11 86.24C21.56 85.17 21.40 84.71 21.19 83.58C20.54 80.25 20.84 78.07 22.32 75.26C23.20 73.59 24.06 72.62 26.26 70.78C26.85 70.29 27.77 69.50 28.29 69.04C28.82 68.57 29.62 67.88 30.07 67.49C31.90 65.92 33.02 64.34 35.21 60.26C36.12 58.57 36.44 57.82 37.17 55.75C37.77 54.05 38.77 51.58 39.24 50.64C40.27 48.60 42.38 46.06 43.91 45.03C46.91 43.01 51.64 42.38 55.18 43.54C57.51 44.30 59.75 46.02 62.03 48.80C62.44 49.30 63.93 51.42 65.03 53.03C67.47 56.66 70.55 59.87 73.30 61.65C74.14 62.19 75.45 62.88 77.57 63.88C81.12 65.55 83.37 67.19 84.46 68.89C86.13 71.47 86.62 72.94 86.73 75.62C86.82 78.12 86.21 80.15 84.70 82.40C83.11 84.76 81.65 85.93 79.13 86.87C76.80 87.74 75.56 87.83 71.67 87.43C70.26 87.28 68.43 87.10 67.28 86.99C66.77 86.94 65.16 86.87 63.69 86.83C59.83 86.73 57.46 86.89 52.47 87.56C51.66 87.67 48.51 88.29 47.63 88.51C46.07 88.91 43.31 89.73 42.46 90.06C41.95 90.25 40.93 90.61 40.18 90.85C39.44 91.09 38.16 91.52 37.35 91.81C34.76 92.71 33.04 92.91 30.89 92.58ZM13.87 69.48C13.01 69.30 11.18 68.66 10.54 68.31C8.78 67.36 6.83 65.61 5.57 63.84C4.54 62.42 3.00 59.08 2.20 56.58C1.06 53.05 0.90 48.39 1.75 43.85C2.20 41.47 3.61 37.87 4.77 36.13C5.90 34.44 8.37 32.53 9.94 32.12C12.26 31.52 14.05 31.92 16.57 33.58C17.74 34.36 17.92 34.52 19.51 36.15C21.03 37.72 22.20 39.35 23.79 42.15C26.04 46.08 27.00 48.60 27.58 52.03L27.87 53.79L27.79 55.85C27.69 58.22 27.58 58.87 26.97 60.68C26.39 62.39 25.95 63.22 24.74 64.80C22.97 67.12 20.41 68.79 17.76 69.35C16.72 69.57 14.65 69.64 13.87 69.48ZM85.40 61.09C83.44 60.85 81.24 60.04 79.61 58.97C78.79 58.43 76.81 56.46 76.17 55.55C74.81 53.62 74.25 52.37 73.63 49.93C73.09 47.81 73.03 47.30 73.03 45.05C73.03 41.07 73.92 36.78 75.68 32.28C76.68 29.73 78.62 26.65 80.07 25.33C81.44 24.09 83.21 23.27 84.89 23.10C86.34 22.96 88.49 23.69 90.38 24.99C92.23 26.24 93.21 27.35 94.85 30.05C98.72 36.40 99.81 44.18 97.80 51.15C96.07 57.13 91.82 60.96 86.75 61.09C86.16 61.11 85.55 61.10 85.40 61.09ZM33.56 42.14C28.75 41.62 24.63 38.79 22.47 34.52C21.43 32.47 20.64 29.78 20.42 27.57C19.76 20.79 21.98 12.36 25.46 8.42C27.54 6.07 28.64 5.26 30.77 4.56C32.32 4.04 33.02 3.94 34.14 4.07C36.59 4.34 37.91 5.00 39.93 6.94C40.86 7.84 41.40 8.56 42.20 9.96C42.79 10.98 43.95 13.63 44.21 14.52C44.79 16.53 45.12 17.87 45.33 19.11C45.46 19.90 45.64 20.96 45.73 21.47C45.89 22.32 45.96 23.24 46.10 25.98C46.18 27.74 45.93 29.75 45.34 32.04C43.60 38.77 38.99 42.72 33.56 42.14ZM60.01 38.82C57.33 38.34 54.26 36.17 52.26 33.36C51.05 31.66 49.33 27.71 48.96 25.75C48.89 25.39 48.73 24.59 48.60 23.98C48.39 22.95 48.32 22.30 48.03 18.92C47.82 16.43 48.13 12.27 48.69 10.06C49.25 7.80 50.44 5.32 51.61 3.96C53.10 2.21 55.78 1.11 58.26 1.22C62.22 1.41 65.03 3.14 68.67 7.62C69.93 9.16 71.80 12.60 72.59 14.80C73.34 16.88 73.42 17.16 73.82 19.00C74.04 20.03 74.25 20.94 74.27 21.03C74.37 21.43 74.45 24.60 74.38 25.42C73.87 31.21 71.19 35.33 66.38 37.72C64.15 38.84 62.06 39.19 60.01 38.82Z"/></symbol>
+</svg>
+
 <nav>
-  <div class="cat-logo" id="catLogo"><img src="https://files.catbox.moe/gko5wo.png" alt="Logo"></div>
+  <div class="cat-logo" id="catLogo" title="回到首页"><svg class="icon"><use href="#i-cat"/></svg></div>
   <div class="paws">
-    <div class="paw-btn" onclick="navigate('oc')"><div class="paw-icon"><img src="https://files.catbox.moe/5z6dwp.png"></div><span class="paw-text">OC</span></div>
-    <div class="paw-btn" onclick="navigate('ai')"><div class="paw-icon"><img src="https://files.catbox.moe/9dk4ty.png"></div><span class="paw-text">AI拟人</span></div>
-    <div class="paw-btn" onclick="navigate('self')"><div class="paw-icon"><img src="https://files.catbox.moe/5z6dwp.png"></div><span class="paw-text">关于铜</span></div>
-    <div class="paw-btn" onclick="navigate('friend')"><div class="paw-icon"><img src="https://files.catbox.moe/9dk4ty.png"></div><span class="paw-text">朋友</span></div>
-    <div class="paw-btn" onclick="navigate('mystery')"><div class="paw-icon"><img src="https://files.catbox.moe/5z6dwp.png"></div><span class="paw-text">神秘大门</span></div>
+    <div class="paw-btn" onclick="navigate('oc')"><div class="paw-icon"><svg class="icon"><use href="#i-paw"/></svg></div><span class="paw-text">OC</span></div>
+    <div class="paw-btn" onclick="navigate('ai')"><div class="paw-icon"><svg class="icon"><use href="#i-paw"/></svg></div><span class="paw-text">AI拟人</span></div>
+    <div class="paw-btn" onclick="navigate('self')"><div class="paw-icon"><svg class="icon"><use href="#i-paw"/></svg></div><span class="paw-text">关于铜</span></div>
+    <div class="paw-btn" onclick="navigate('friend')"><div class="paw-icon"><svg class="icon"><use href="#i-paw"/></svg></div><span class="paw-text">朋友</span></div>
+    <div class="paw-btn" onclick="navigate('mystery')"><div class="paw-icon"><svg class="icon"><use href="#i-paw"/></svg></div><span class="paw-text">神秘大门</span></div>
   </div>
 </nav>
 
 <section id="page-home">
-  <div class="hero-content-group">
+  <div class="hero-stage">
     <div class="img-a-box">
       <img src="https://files.catbox.moe/6tybd0.png" alt="Image A">
     </div>
-    
+
     <div class="hero-text-layer">
-      <p class="hero-eyebrow">PURE DESIGN & DIGITAL ILLUSTRATIONS</p>
+      <p class="hero-eyebrow">PURE DESIGN &amp; DIGITAL ILLUSTRATIONS</p>
       <h1 class="hero-title">ATELIER</h1>
     </div>
-  </div>
 
-  <div class="deco-bar"></div>
+    <div class="deco-bar"></div>
 
-  <div class="img-b-container">
-    <div class="img-b-actual">
-      <img src="https://files.catbox.moe/avjoa9.jpg" alt="Image B">
+    <div class="img-b-container">
+      <div class="img-b-actual">
+        <img src="https://files.catbox.moe/avjoa9.jpg" alt="Image B">
+      </div>
     </div>
+
+    <div class="watermark-fixed">不可食用铜</div>
+
+    <!-- 右侧红色竖条 -->
+    <div class="bottom-right-deco"></div>
   </div>
 
-  <div class="watermark-fixed">不可食用铜</div>
-
-  <!-- 底部装饰条 -->
-  <div class="bottom-right-deco"></div>
+  <!-- 底部红色横条 -->
+  <div class="kite-band"></div>
 
   <!-- 联系方式区域 -->
   <section class="contact-section">
-    <h2 class="contact-title">GET IN TOUCH</h2>
     <div class="contact-grid">
-      <div class="contact-item">
-        <h4>EMAIL</h4>
-        <p><a href="mailto:your-email@example.com">tongtong@atelier.com</a></p>
+      <div class="contact-col">
+        <p class="contact-item">QQ：123456789</p>
+        <p class="contact-item">抖音：<a href="#">不可食用铜</a></p>
+        <p class="contact-item">x：<a href="#">不可食用铜</a></p>
       </div>
-      <div class="contact-item">
-        <h4>WEIBO</h4>
-        <p><a href="#">@不可食用铜</a></p>
-      </div>
-      <div class="contact-item">
-        <h4>BILI BILI</h4>
-        <p><a href="#">@不可食用铜</a></p>
-      </div>
-      <div class="contact-item">
-        <h4>LOCATION</h4>
-        <p>Internet · Digital World</p>
+      <div class="contact-divider"></div>
+      <div class="contact-col">
+        <p class="contact-item">youtube：<a href="#">不可食用铜</a></p>
+        <p class="contact-item">小红书：<a href="#">不可食用铜</a></p>
+        <p class="contact-item">lofter：<a href="#">不可食用铜</a></p>
       </div>
     </div>
   </section>
@@ -355,13 +405,15 @@ function navigate(targetZone) {
   document.querySelectorAll('.paw-btn').forEach(btn => {
     btn.classList.toggle('active', btn.getAttribute('onclick').includes(targetZone));
   });
+  window.scrollTo(0, 0);
 }
 
 document.getElementById('catLogo').addEventListener('click', () => {
   zones.forEach(z => document.getElementById('page-' + z).style.display = 'none');
-  document.getElementById('page-home').style.display = 'block'; // 恢复为 block 以包含联系区域
+  document.getElementById('page-home').style.display = 'block';
   document.getElementById('site-footer').style.display = 'flex';
   document.querySelectorAll('.paw-btn').forEach(b => b.classList.remove('active'));
+  window.scrollTo(0, 0);
 });
 
 let lastPaw = 0;
@@ -371,9 +423,10 @@ document.addEventListener('mousemove', e => {
   lastPaw = now;
   const paw = document.createElement('div');
   paw.className = 'trail-paw';
-  paw.innerHTML = '🐾';
+  paw.innerHTML = '<svg class="icon"><use href="#i-paw"/></svg>';
   paw.style.left = e.clientX + 'px';
   paw.style.top = e.clientY + 'px';
+  paw.style.setProperty('--r', (Math.random() * 40 - 20) + 'deg');
   document.body.appendChild(paw);
   setTimeout(() => paw.remove(), 1200);
 });
