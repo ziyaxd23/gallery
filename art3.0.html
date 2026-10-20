@@ -22,6 +22,9 @@
 
 * { margin:0; padding:0; box-sizing:border-box; }
 
+/* 始终保留滚动条，切换模块时不会因页面高度变化而一闪一闪 */
+html { overflow-y: scroll; }
+
 body {
   background: var(--angst);
   color: var(--ash);
@@ -65,10 +68,20 @@ nav {
   cursor: pointer; overflow: hidden;
   transition: 0.5s cubic-bezier(0.23, 1, 0.32, 1);
 }
-.paw-icon { width: var(--paw); height: var(--paw); flex-shrink: 0; transition: transform 0.4s; }
+.paw-icon {
+  width: var(--paw); height: var(--paw); flex-shrink: 0;
+  transform: rotate(var(--tilt, 0deg)) scale(0.92);
+  transition: transform 0.4s;
+}
 /* 灰 / 红 交替 */
 .paw-btn:nth-child(odd)  .paw-icon { color: var(--charcoal); }
 .paw-btn:nth-child(even) .paw-icon { color: var(--kite); }
+/* 每只猫爪朝向不同，像一串走过的脚印 */
+.paw-btn:nth-child(1) { --tilt: 22deg; }
+.paw-btn:nth-child(2) { --tilt: -14deg; }
+.paw-btn:nth-child(3) { --tilt: 34deg; }
+.paw-btn:nth-child(4) { --tilt: -26deg; }
+.paw-btn:nth-child(5) { --tilt: 10deg; }
 .paw-text {
   margin-left: 0.8em; white-space: nowrap;
   font-size: clamp(0.85rem, 0.95vw, 1.1rem); color: var(--bark);
@@ -76,7 +89,7 @@ nav {
 }
 .paw-btn:hover  { width: calc(var(--paw) + 7em); background: rgba(51, 49, 47, 0.15); }
 .paw-btn:hover .paw-text { opacity: 1; }
-.paw-btn:hover .paw-icon { transform: rotate(-12deg); }
+.paw-btn:hover .paw-icon { transform: rotate(calc(var(--tilt, 0deg) - 20deg)) scale(0.92); }
 .paw-btn.active { width: calc(var(--paw) + 7em); background: var(--bark); }
 .paw-btn.active .paw-text { opacity: 1; color: var(--ash); }
 .paw-btn.active .paw-icon { color: var(--ash); }
@@ -269,7 +282,7 @@ footer a { color: var(--ash); text-decoration: none; margin-left: 15px; }
   /* 手机没有悬停，激活时只换底色不展开 */
   .paw-btn:hover, .paw-btn.active { width: calc(var(--paw) + var(--pad) * 2); }
   .paw-btn:hover { background: none; }
-  .paw-btn:hover .paw-icon { transform: none; }
+  .paw-btn:hover .paw-icon { transform: rotate(var(--tilt, 0deg)) scale(0.92); }
   .paw-text { display: none; }
 
   .hero-stage { height: 226.7vw; padding-top: 24.8vw; }
