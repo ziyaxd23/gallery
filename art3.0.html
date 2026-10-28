@@ -4,20 +4,76 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>铜铜 Atelier</title>
+<script>
+  // 记住的选择优先，否则跟随系统
+  (function () {
+    var t = null;
+    try { t = localStorage.getItem('theme'); } catch (e) {}
+    if (t !== 'day' && t !== 'night') t = matchMedia('(prefers-color-scheme: light)').matches ? 'day' : 'night';
+    document.documentElement.dataset.theme = t;
+  })();
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Titillium+Web:wght@900&family=Montserrat:wght@700&family=Noto+Serif+SC:wght@300;400&display=swap" rel="stylesheet">
 <style>
 /* ── 色卡变量 ── */
 :root {
+  /* 夜间色卡 */
   --ash:        #B7B4AE;
   --charcoal:   #726E68;
   --bark:       #33312F;
   --kite:       #371E1E;
   --angst:      #0A0A0A;
+  /* 白天色卡 */
+  --rice:       #F2EAE0;
+  --foggy:      #7EA1EE;
+  --plate:      #E0D5BD;
+  --wall:       #164793;
+  --gypsum:     #F6F4F5;
+
+  /* 夜间模式（默认） */
+  color-scheme: dark;
+  --bg:          var(--angst);    /* 页面底色 */
+  --fg:          var(--ash);      /* 正文、水印 */
+  --nav-bg:      var(--ash);
+  --nav-shadow:  rgba(0,0,0,0.25);
+  --panel:       var(--ash);      /* 图片 B 底板 */
+  --accent:      var(--kite);     /* 猫头、标题、红条 */
+  --muted:       var(--charcoal); /* 装饰条、灰猫爪 */
+  --deep:        var(--bark);     /* 图片 A 投影 */
+  --active-bg:   var(--bark);
+  --on-active:   var(--ash);
+  --hover:       rgba(51, 49, 47, 0.15);
+  --paw-label:   var(--bark);
+  --contact-bg:  var(--charcoal);
+  --contact-fg:  var(--ash);
+  --footer-fg:   var(--charcoal);
+  --footer-line: rgba(255,255,255,0.05);
 
   /* 导航尺寸（电脑端，按 1920 宽设计稿换算成 vw） */
   --logo-w: clamp(64px, 7.1vw, 136px);
   --paw:    clamp(34px, 4vw, 77px);
   --paw-gap: clamp(4px, 0.55vw, 10px);
+}
+
+/* 白天模式 */
+:root[data-theme="day"] {
+  color-scheme: light;
+  --bg:          var(--gypsum);
+  --fg:          var(--wall);
+  --nav-bg:      var(--rice);
+  --nav-shadow:  rgba(22, 71, 147, 0.12);
+  --panel:       var(--plate);
+  --accent:      var(--wall);
+  --muted:       var(--foggy);
+  --deep:        var(--foggy);
+  --active-bg:   var(--wall);
+  --on-active:   var(--gypsum);
+  --hover:       rgba(22, 71, 147, 0.1);
+  --paw-label:   var(--wall);
+  --contact-bg:  var(--foggy);
+  --contact-fg:  var(--wall);
+  --footer-fg:   rgba(22, 71, 147, 0.6);
+  --footer-line: rgba(22, 71, 147, 0.08);
 }
 
 * { margin:0; padding:0; box-sizing:border-box; }
@@ -26,8 +82,9 @@
 html { overflow-y: scroll; }
 
 body {
-  background: var(--angst);
-  color: var(--ash);
+  background: var(--bg);
+  color: var(--fg);
+  transition: background-color 0.4s, color 0.4s;
   font-family: 'Noto Serif SC', serif;
   min-height: 100vh;
   overflow-x: hidden;
@@ -47,17 +104,32 @@ nav {
   transform: translateX(-50%);
   z-index: 200;
   width: 93.5vw;
-  background: var(--ash);
+  background: var(--nav-bg);
   border-radius: 999px;
   padding: clamp(8px, 0.9vw, 18px) clamp(18px, 2vw, 40px);
   display: flex;
   align-items: center;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  box-shadow: 0 10px 30px var(--nav-shadow);
 }
-.cat-logo { width: var(--logo-w); flex-shrink: 0; cursor: pointer; color: var(--kite); }
+.cat-logo { width: var(--logo-w); flex-shrink: 0; cursor: pointer; color: var(--accent); }
 .cat-logo .icon { height: auto; aspect-ratio: 100 / 75.52; }
 
-.paws { display: flex; gap: var(--paw-gap); margin-left: auto; }
+/* 白天 / 夜间 切换 */
+.theme-toggle {
+  margin-left: auto;
+  margin-right: calc(var(--paw-gap) * 2);
+  width: calc(var(--paw) * 0.62); height: calc(var(--paw) * 0.62);
+  flex-shrink: 0;
+  border: none; background: none; padding: 0;
+  color: var(--accent); cursor: pointer;
+  transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.theme-toggle:hover { transform: rotate(-25deg) scale(1.1); }
+.theme-toggle .i-moon { display: none; }
+:root[data-theme="day"] .theme-toggle .i-sun { display: none; }
+:root[data-theme="day"] .theme-toggle .i-moon { display: block; }
+
+.paws { display: flex; gap: var(--paw-gap); }
 .paw-btn {
   --pad: calc(var(--paw) * 0.08);
   height: calc(var(--paw) + var(--pad) * 2);
@@ -74,8 +146,8 @@ nav {
   transition: transform 0.4s;
 }
 /* 灰 / 红 交替 */
-.paw-btn:nth-child(odd)  .paw-icon { color: var(--charcoal); }
-.paw-btn:nth-child(even) .paw-icon { color: var(--kite); }
+.paw-btn:nth-child(odd)  .paw-icon { color: var(--muted); }
+.paw-btn:nth-child(even) .paw-icon { color: var(--accent); }
 /* 每只猫爪朝向不同，像一串走过的脚印 */
 .paw-btn:nth-child(1) { --tilt: 22deg; }
 .paw-btn:nth-child(2) { --tilt: -14deg; }
@@ -84,15 +156,15 @@ nav {
 .paw-btn:nth-child(5) { --tilt: 10deg; }
 .paw-text {
   margin-left: 0.8em; white-space: nowrap;
-  font-size: clamp(0.85rem, 0.95vw, 1.1rem); color: var(--bark);
+  font-size: clamp(0.85rem, 0.95vw, 1.1rem); color: var(--paw-label);
   opacity: 0; transition: 0.4s;
 }
-.paw-btn:hover  { width: calc(var(--paw) + 7em); background: rgba(51, 49, 47, 0.15); }
+.paw-btn:hover  { width: calc(var(--paw) + 7em); background: var(--hover); }
 .paw-btn:hover .paw-text { opacity: 1; }
 .paw-btn:hover .paw-icon { transform: rotate(calc(var(--tilt, 0deg) - 20deg)) scale(0.92); }
-.paw-btn.active { width: calc(var(--paw) + 7em); background: var(--bark); }
-.paw-btn.active .paw-text { opacity: 1; color: var(--ash); }
-.paw-btn.active .paw-icon { color: var(--ash); }
+.paw-btn.active { width: calc(var(--paw) + 7em); background: var(--active-bg); }
+.paw-btn.active .paw-text { opacity: 1; color: var(--on-active); }
+.paw-btn.active .paw-icon { color: var(--on-active); }
 
 /* ════════════════════════════════
    HERO 布局（电脑端）
@@ -109,8 +181,8 @@ nav {
   position: relative;
   width: 44.3vw;
   aspect-ratio: 1.58;
-  background: var(--bark);
-  box-shadow: 1.75vw 1.75vw 0 var(--bark);
+  background: var(--deep);
+  box-shadow: 1.75vw 1.75vw 0 var(--deep);
   margin-bottom: 2.3vw;
   z-index: 10;
 }
@@ -131,7 +203,7 @@ nav {
   font-size: clamp(9px, 0.78vw, 15px);
   letter-spacing: 0.5em;
   padding-left: 0.5em;     /* 抵消最后一个字母后的间距，保持居中 */
-  color: var(--kite);
+  color: var(--accent);
   margin-bottom: 0.4vw;
   white-space: nowrap;
 }
@@ -140,7 +212,7 @@ nav {
   font-weight: 900;
   font-size: 5.4vw;
   line-height: 0.8;
-  color: var(--kite);
+  color: var(--accent);
 }
 
 .deco-bar {
@@ -149,7 +221,7 @@ nav {
   top: 50vw;
   width: 37.3vw;
   height: 4.2vw;
-  background: var(--charcoal);
+  background: var(--muted);
   z-index: 5;
 }
 
@@ -159,7 +231,7 @@ nav {
   top: 20.7vw;
   width: 83.4vw;
   height: 46vw;
-  background: var(--ash);
+  background: var(--panel);
   display: flex;
   justify-content: flex-end;
   z-index: 1;
@@ -189,7 +261,7 @@ nav {
   font-size: max(12px, 1.1vw);
   letter-spacing: 7.95vw;
   line-height: 1;
-  color: var(--ash);
+  color: var(--fg);
   opacity: 0.8;
   white-space: nowrap;
   pointer-events: none;
@@ -203,17 +275,17 @@ nav {
   top: 43.9vw;
   bottom: 0;
   width: 4.5vw;
-  background-color: var(--kite);
+  background-color: var(--accent);
   z-index: 20;
 }
 /* 底部红色横条（与竖条相接） */
-.kite-band { height: 4.5vw; background: var(--kite); }
+.kite-band { height: 4.5vw; background: var(--accent); }
 
 /* ════════════════════════════════
    联系方式
 ════════════════════════════════ */
 .contact-section {
-  background-color: var(--charcoal);
+  background-color: var(--contact-bg);
   padding: 3.5vw 6vw;
 }
 .contact-grid {
@@ -228,19 +300,19 @@ nav {
 /* 中间双竖线 */
 .contact-divider {
   width: 10px;
-  border-left: 1px solid var(--ash);
-  border-right: 1px solid var(--ash);
+  border-left: 1px solid var(--contact-fg);
+  border-right: 1px solid var(--contact-fg);
   opacity: 0.7;
 }
 .contact-item {
   font-size: clamp(0.95rem, 1.25vw, 1.4rem);
   font-weight: 300;
   letter-spacing: 0.12em;
-  color: var(--ash);
+  color: var(--contact-fg);
   white-space: nowrap;
 }
 .contact-item a { color: inherit; text-decoration: none; border-bottom: 1px solid transparent; transition: 0.3s; }
-.contact-item a:hover { border-bottom-color: var(--ash); }
+.contact-item a:hover { border-bottom-color: var(--contact-fg); }
 
 /* ════════════════════════════════
    通用逻辑
@@ -262,11 +334,11 @@ nav {
 .ai-grok     { --ai-bg: linear-gradient(155deg,#050505,#404040); }
 
 /* 鼠标拖尾：小猫爪 */
-.trail-paw { position: fixed; pointer-events: none; width: 18px; height: 18px; color: var(--charcoal); z-index: 9999; animation: pawFade 1.2s ease forwards; }
+.trail-paw { position: fixed; pointer-events: none; width: 18px; height: 18px; color: var(--muted); z-index: 9999; animation: pawFade 1.2s ease forwards; }
 @keyframes pawFade { 0% { opacity: 0.7; transform: translate(-50%,-50%) rotate(var(--r)) scale(1); } 100% { opacity: 0; transform: translate(-50%,-80%) rotate(var(--r)) scale(0.5); } }
 
-footer { padding: 40px 60px; border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--charcoal); }
-footer a { color: var(--ash); text-decoration: none; margin-left: 15px; }
+footer { padding: 40px 60px; border-top: 1px solid var(--footer-line); display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--footer-fg); }
+footer a { color: var(--fg); text-decoration: none; margin-left: 15px; }
 
 /* ════════════════════════════════
    手机端（按 375 宽设计稿换算成 vw）
@@ -290,7 +362,7 @@ footer a { color: var(--ash); text-decoration: none; margin-left: 15px; }
   .img-a-box {
     width: 75vw;
     aspect-ratio: 1.55;
-    box-shadow: 3.7vw 3.7vw 0 var(--bark);
+    box-shadow: 3.7vw 3.7vw 0 var(--deep);
     margin-bottom: 4.6vw;
   }
   .hero-text-layer { align-items: flex-start; margin-left: 9.3vw; }
@@ -331,6 +403,10 @@ footer a { color: var(--ash); text-decoration: none; margin-left: 15px; }
 
 <nav>
   <div class="cat-logo" id="catLogo" title="回到首页"><svg class="icon"><use href="#i-cat"/></svg></div>
+  <button class="theme-toggle" id="themeToggle" type="button" aria-label="切换白天 / 夜间模式">
+    <svg class="icon i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.6"/><g stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 1.8v2.6M12 19.6v2.6M1.8 12h2.6M19.6 12h2.6M4.8 4.8l1.8 1.8M17.4 17.4l1.8 1.8M4.8 19.2l1.8-1.8M17.4 6.6l1.8-1.8"/></g></svg>
+    <svg class="icon i-moon" viewBox="0 0 24 24"><path d="M20.5 14.6A8.6 8.6 0 0 1 9.4 3.5a8.6 8.6 0 1 0 11.1 11.1Z"/></svg>
+  </button>
   <div class="paws">
     <div class="paw-btn" onclick="navigate('oc')"><div class="paw-icon"><svg class="icon"><use href="#i-paw"/></svg></div><span class="paw-text">OC</span></div>
     <div class="paw-btn" onclick="navigate('ai')"><div class="paw-icon"><svg class="icon"><use href="#i-paw"/></svg></div><span class="paw-text">AI拟人</span></div>
@@ -428,6 +504,18 @@ document.getElementById('catLogo').addEventListener('click', () => {
   document.querySelectorAll('.paw-btn').forEach(b => b.classList.remove('active'));
   window.scrollTo(0, 0);
 });
+
+const themeToggle = document.getElementById('themeToggle');
+function syncThemeLabel() {
+  themeToggle.title = document.documentElement.dataset.theme === 'day' ? '切换到夜间模式' : '切换到白天模式';
+}
+themeToggle.addEventListener('click', () => {
+  const next = document.documentElement.dataset.theme === 'day' ? 'night' : 'day';
+  document.documentElement.dataset.theme = next;
+  try { localStorage.setItem('theme', next); } catch (e) {}
+  syncThemeLabel();
+});
+syncThemeLabel();
 
 let lastPaw = 0;
 document.addEventListener('mousemove', e => {
