@@ -38,7 +38,9 @@
   --nav-shadow:  rgba(0,0,0,0.25);
   --panel:       var(--ash);      /* 图片 B 底板 */
   --accent:      var(--kite);     /* 猫头、标题、红条 */
-  --muted:       var(--charcoal); /* 装饰条、灰猫爪 */
+  --muted:       var(--charcoal); /* 装饰条 */
+  --paw-alt:     var(--charcoal); /* 浅色猫爪 */
+  --trail:       var(--charcoal); /* 鼠标拖尾 */
   --deep:        var(--bark);     /* 图片 A 投影 */
   --active-bg:   var(--bark);
   --on-active:   var(--ash);
@@ -58,22 +60,24 @@
 /* 白天模式 */
 :root[data-theme="day"] {
   color-scheme: light;
-  --bg:          var(--gypsum);
+  --bg:          var(--foggy);
   --fg:          var(--wall);
   --nav-bg:      var(--rice);
-  --nav-shadow:  rgba(22, 71, 147, 0.12);
-  --panel:       var(--plate);
+  --nav-shadow:  rgba(22, 71, 147, 0.25);
+  --panel:       var(--gypsum);
   --accent:      var(--wall);
-  --muted:       var(--foggy);
-  --deep:        var(--foggy);
+  --muted:       var(--plate);
+  --paw-alt:     var(--foggy);
+  --trail:       var(--rice);
+  --deep:        var(--wall);
   --active-bg:   var(--wall);
   --on-active:   var(--gypsum);
   --hover:       rgba(22, 71, 147, 0.1);
   --paw-label:   var(--wall);
-  --contact-bg:  var(--foggy);
+  --contact-bg:  var(--plate);
   --contact-fg:  var(--wall);
-  --footer-fg:   rgba(22, 71, 147, 0.6);
-  --footer-line: rgba(22, 71, 147, 0.08);
+  --footer-fg:   rgba(22, 71, 147, 0.75);
+  --footer-line: rgba(22, 71, 147, 0.15);
 }
 
 * { margin:0; padding:0; box-sizing:border-box; }
@@ -146,7 +150,7 @@ nav {
   transition: transform 0.4s;
 }
 /* 灰 / 红 交替 */
-.paw-btn:nth-child(odd)  .paw-icon { color: var(--muted); }
+.paw-btn:nth-child(odd)  .paw-icon { color: var(--paw-alt); }
 .paw-btn:nth-child(even) .paw-icon { color: var(--accent); }
 /* 每只猫爪朝向不同，像一串走过的脚印 */
 .paw-btn:nth-child(1) { --tilt: 22deg; }
@@ -334,7 +338,7 @@ nav {
 .ai-grok     { --ai-bg: linear-gradient(155deg,#050505,#404040); }
 
 /* 鼠标拖尾：小猫爪 */
-.trail-paw { position: fixed; pointer-events: none; width: 18px; height: 18px; color: var(--muted); z-index: 9999; animation: pawFade 1.2s ease forwards; }
+.trail-paw { position: fixed; pointer-events: none; width: 18px; height: 18px; color: var(--trail); z-index: 9999; animation: pawFade 1.2s ease forwards; }
 @keyframes pawFade { 0% { opacity: 0.7; transform: translate(-50%,-50%) rotate(var(--r)) scale(1); } 100% { opacity: 0; transform: translate(-50%,-80%) rotate(var(--r)) scale(0.5); } }
 
 footer { padding: 40px 60px; border-top: 1px solid var(--footer-line); display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--footer-fg); }
